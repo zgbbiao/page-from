@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-09-10 19:51:23
- * @LastEditTime: 2020-07-10 23:46:50
+ * @LastEditTime: 2020-07-10 23:49:37
  * @LastEditors: Please set LastEditors
 
 
@@ -210,7 +210,7 @@
                     >{{ item2.label }}</a-select-option
                   >
                 </a-select>
-                <div class="input-select u-clearfix"
+                <div class="input-select clearfix"
                 v-else-if="item.dom === 'input-select'"
                  v-show="item.show !== false">
                   <a-input
@@ -542,4 +542,13 @@ div.input-select-select {
   z-index: 3;
   position: relative;
 }
+.clearfix:after{
+    display:block;
+    clear:both;
+    content:"";
+    visibility:hidden; 
+    height:0;
+} 
+.clearfix{zoom:1}
+
 </style>
