@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-09-10 19:51:23
- * @LastEditTime: 2020-07-10 22:08:35
+ * @LastEditTime: 2020-07-10 22:34:20
  * @LastEditors: Please set LastEditors
 
 
@@ -434,24 +434,13 @@ export default {
   }
 }
 </script>
-<style lang="scss" scoped>
-.transfer-wrapper {
-  padding-left: 20px;
-  h4 {
-    font-size: 16px;
-    margin-bottom: 20px;
-  }
-}
-
-.form-item-wrapper {
-  display: flex;
-  > label {
+<style scoped>
+.form-item-wrapper >label{
     padding-right: 16px;
   }
-  > div {
+.form-item-wrapper > div {
     flex: 1;
   }
-}
 .form-isDetails-label {
   background: #f9f9f9;
   border: 1px solid #e8e8e8;
