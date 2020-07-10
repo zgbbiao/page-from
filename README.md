@@ -1,7 +1,7 @@
 <!--
  * @Author: your name
  * @Date: 2020-07-10 21:56:46
- * @LastEditTime: 2020-07-10 22:03:54
+ * @LastEditTime: 2020-07-10 22:10:06
  * @LastEditors: Please set LastEditors
  * @Description: In User Settings Edit
  * @FilePath: \pageForm\README.md
@@ -29,6 +29,7 @@
       :form-list="formList"
       :form-data="formData"
       :rules="rules"
+      :labelWidth="labelWidth"
     >
       <template v-slot:addonAfter="scope">
         <span class="pointer" @click="handleSelectMenu(scope)">选择</span>
@@ -54,7 +55,8 @@ export default {
         resourceGroupId: [{ required: true, message: '请选择导入分组' }],
         resourceName: [{ required: true, message: '请填写资源名称' }]
         // reqType: [{ required: true, message: '请选择请求方式' }]
-      }
+      },
+      labelWidth: '100px'
     }
   },
   computed: {
@@ -73,6 +75,9 @@ export default {
           dom: 'input',
           prop: 'menuName',
           placeholder: '请选择菜单名称',
+          labelBind: {
+            width: '200px'
+          },
           bind: {
             disabled: true,
           },

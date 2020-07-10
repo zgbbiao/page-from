@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-09-10 19:51:23
- * @LastEditTime: 2020-07-10 21:51:58
+ * @LastEditTime: 2020-07-10 22:08:35
  * @LastEditors: Please set LastEditors
 
 
@@ -63,6 +63,9 @@
                 v-if="item.label|| isDetails"
                 :class="{
                   'form-isDetails-label': isDetails
+                }"
+                :style="{
+                  width: labelWidth
                 }"
                 v-bind="{
                   ...(item.labelBind || {})
@@ -330,6 +333,10 @@ export default {
     layout: {
       type: String,
       default: 'horizontal'
+    },
+    labelWidth: {
+      type: String,
+      default: '80px'
     },
     defaultFormItemLayout: {
       type: Object,
