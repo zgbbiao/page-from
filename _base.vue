@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-09-10 19:51:23
- * @LastEditTime: 2020-07-10 23:49:37
+ * @LastEditTime: 2020-07-11 01:29:44
  * @LastEditors: Please set LastEditors
 
 
@@ -236,7 +236,7 @@
                   </a-input>
                   <a-select
                     v-decorator="[
-                      item.prop + 'select',
+                      item.prop + '_input_select',
                       {
                         initialValue: formData[item.prop],
                         rules: rules[item.prop]
