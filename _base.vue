@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-09-10 19:51:23
- * @LastEditTime: 2020-07-10 22:34:20
+ * @LastEditTime: 2020-07-10 23:46:50
  * @LastEditors: Please set LastEditors
 
 
@@ -210,6 +210,55 @@
                     >{{ item2.label }}</a-select-option
                   >
                 </a-select>
+                <div class="input-select u-clearfix"
+                v-else-if="item.dom === 'input-select'"
+                 v-show="item.show !== false">
+                  <a-input
+                    class="input-select-input"
+                    v-decorator="[
+                      item.prop,
+                      {
+                        initialValue: formData[item.prop],
+                        rules: rules[item.prop]
+                      }
+                    ]"
+                    v-bind="item.bind"
+                    :placeholder="item.placeholder"
+                    v-on="{ ...(item.listeners || {}), change: (value) => handleInputSelectChange(value, item.prop) }"
+                  >
+                    <template v-for="slotItem in item.slots || []" v-slot:[slotItem]>
+                      <slot
+                        :name="slotItem"
+                        :scopedSlots="item.scopedSlots || {}"
+                        :item="item"
+                      ></slot>
+                    </template>
+                  </a-input>
+                  <a-select
+                    v-decorator="[
+                      item.prop + 'select',
+                      {
+                        initialValue: formData[item.prop],
+                        rules: rules[item.prop]
+                      }
+                    ]"
+                    style="width: 100%;"
+                    class="input-select-select"
+                    v-bind="item.bind"
+                    :placeholder="item.placeholder"
+                    v-on="{ ...(item.listeners || {}), change: (value) => handleInputSelectChange(value, item.prop) }"
+                  >
+                    <a-select-option v-if="(item.bind || {}).emptySelect" value="">
+                      请选择
+                    </a-select-option>
+                    <a-select-option
+                      v-for="(item2, key) in item.list || []"
+                      :key="'option' + key"
+                      :value="item2.value"
+                      >{{ item2.label }}</a-select-option
+                    >
+                  </a-select>
+                </div>
                 <div
                   v-else-if="item.dom === 'transfer' && item.list"
                   v-show="item.show !== false"
@@ -430,6 +479,11 @@ export default {
     },
     getFieldsValue(obj) {
       return this.form.getFieldsValue(obj)
+    },
+    handleInputSelectChange(value, prop) {
+      this.setFieldsValue({
+        [prop]: value
+      })
     }
   }
 }
@@ -437,6 +491,7 @@ export default {
 <style scoped>
 .form-item-wrapper >label{
     padding-right: 16px;
+    display: flex;
   }
 .form-item-wrapper > div {
     flex: 1;
@@ -463,5 +518,28 @@ export default {
 }
 .form-isDetails-form-item {
   margin-bottom: 0;
+}
+
+.input-select {
+  position: relative;
+}
+input.input-select-input {
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  width: calc(100% - 40px);
+}
+div.input-select-select {
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+.select-color-btn {
+  width: 14%;
+  display: inline-block;
+  height: 80rpx;
+  float: right;
+  z-index: 3;
+  position: relative;
 }
 </style>
