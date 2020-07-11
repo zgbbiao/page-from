@@ -2,7 +2,7 @@
  * @Description: In User Settings Edit
  * @Author: your name
  * @Date: 2019-09-10 19:51:23
- * @LastEditTime: 2020-07-11 01:29:44
+ * @LastEditTime: 2020-07-11 17:48:11
  * @LastEditors: Please set LastEditors
 
 
@@ -42,10 +42,18 @@
         >
           <a-form-item
             v-show="item.show !== false"
-            :label="''"
+            :label="
+              item.show !== false
+                ? item.label && !(item.customLabel || isDetails)
+                  ? item.label
+                  : ''
+                : ''
+            "
             v-bind="{
               ...(item.formItemLayout
                 ? item.formItemLayout
+                : item.label
+                ? formItemLayout
                 : defaultFormItemLayout),
               ...formItemBind,
               ...item.formItemBind,
@@ -60,7 +68,7 @@
           >
             <div class="form-item-wrapper">
               <label
-                v-if="item.label|| isDetails"
+                v-if="item.label && (item.customLabel || isDetails)"
                 :class="{
                   'form-isDetails-label': isDetails
                 }"
@@ -74,10 +82,10 @@
                 {{ item.label }}
                 <span
                   v-if="
-                    (formItemBind &&
-                      formItemBind.colon) ||
-                      (item.formItemBind &&
-                      item.formItemBind.colon )
+                    formItemBind &&
+                      formItemBind.colon &&
+                      item.formItemBind &&
+                      item.formItemBind.colon !== false
                   "
                   >:</span
                 >
@@ -94,7 +102,13 @@
                     }
                   ]"
                   v-bind="item.bind"
+                  :disabled="item.disabled"
                   :placeholder="item.placeholder"
+                  @change="
+                    (...args) => {
+                      item.change && item.change(...args)
+                    }
+                  "
                   v-on="item.listeners || {}"
                 >
                   <template
@@ -119,7 +133,13 @@
                     }
                   ]"
                   v-bind="item.bind"
+                  :disabled="item.disabled"
                   :placeholder="item.placeholder"
+                  @change="
+                    (...args) => {
+                      item.change && item.change(...args)
+                    }
+                  "
                   v-on="item.listeners || {}"
                 />
 
@@ -134,6 +154,7 @@
                     }
                   ]"
                   v-bind="item.bind"
+                  :disabled="item.disabled"
                   :placeholder="item.placeholder"
                   v-on="item.listeners || {}"
                 >
@@ -165,6 +186,7 @@
                     }
                   ]"
                   v-bind="item.bind"
+                  :disabled="item.disabled"
                   :placeholder="item.placeholder"
                   v-on="item.listeners || {}"
                 ></a-textarea>
@@ -173,7 +195,18 @@
                   v-show="item.show !== false"
                   :key="item.key ? item.key : 'submit'"
                   :type="item.type ? item.type : 'primary'"
+                  :disabled="item.disabled"
                   v-bind="item.bind"
+                  @click="
+                    () => {
+                      item.click && item.click()
+                    }
+                  "
+                  @change="
+                    (...args) => {
+                      item.change && item.change(...args)
+                    }
+                  "
                   v-on="item.listeners || {}"
                   >{{ item.text }}
                   <template
@@ -194,11 +227,12 @@
                     }
                   ]"
                   v-bind="item.bind"
+                  :disabled="item.disabled"
                   :placeholder="item.placeholder"
                   v-on="item.listeners || {}"
                 >
                   <a-select-option
-                    v-if="(item.bind || {}).emptySelect"
+                    v-if="!(item.bind || {}).emptySelect"
                     value=""
                   >
                     请选择
@@ -210,11 +244,13 @@
                     >{{ item2.label }}</a-select-option
                   >
                 </a-select>
-                <div class="input-select clearfix"
-                v-else-if="item.dom === 'input-select'"
-                 v-show="item.show !== false">
+
+                <div
+                  v-else-if="item.dom === 'input-select'"
+                  v-show="item.show !== false"
+                  class="input-select clearfix"
+                >
                   <a-input
-                    class="input-select-input"
                     v-decorator="[
                       item.prop,
                       {
@@ -222,11 +258,18 @@
                         rules: rules[item.prop]
                       }
                     ]"
+                    class="input-select-input"
                     v-bind="item.bind"
                     :placeholder="item.placeholder"
-                    v-on="{ ...(item.listeners || {}), change: (value) => handleInputSelectChange(value, item.prop) }"
+                    v-on="{
+                      ...(item.listeners || {}),
+                      change: value => handleInputSelectChange(value, item.prop)
+                    }"
                   >
-                    <template v-for="slotItem in item.slots || []" v-slot:[slotItem]>
+                    <template
+                      v-for="slotItem in item.slots || []"
+                      v-slot:[slotItem]
+                    >
                       <slot
                         :name="slotItem"
                         :scopedSlots="item.scopedSlots || {}"
@@ -246,9 +289,15 @@
                     class="input-select-select"
                     v-bind="item.bind"
                     :placeholder="item.placeholder"
-                    v-on="{ ...(item.listeners || {}), change: (value) => handleInputSelectChange(value, item.prop) }"
+                    v-on="{
+                      ...(item.listeners || {}),
+                      change: value => handleInputSelectChange(value, item.prop)
+                    }"
                   >
-                    <a-select-option v-if="(item.bind || {}).emptySelect" value="">
+                    <a-select-option
+                      v-if="(item.bind || {}).emptySelect"
+                      value=""
+                    >
                       请选择
                     </a-select-option>
                     <a-select-option
@@ -270,7 +319,11 @@
                     v-bind="item.bind"
                     :target-keys="item.targetKeys"
                     :render="item.render"
-                    v-on="item.listeners || {}"
+                    @change="
+                      (...args) => {
+                        item.change && item.change(...args)
+                      }
+                    "
                   >
                   </a-transfer>
                 </div>
@@ -387,6 +440,21 @@ export default {
       type: String,
       default: '80px'
     },
+    formItemLayout: {
+      type: Object,
+      default: () => {
+        return {
+          labelCol: {
+            xs: { span: 24 },
+            sm: { span: 6 }
+          },
+          wrapperCol: {
+            xs: { span: 24 },
+            sm: { span: 18 }
+          }
+        }
+      }
+    },
     defaultFormItemLayout: {
       type: Object,
       default: () => {
@@ -489,13 +557,15 @@ export default {
 }
 </script>
 <style scoped>
-.form-item-wrapper >label{
-    padding-right: 16px;
-    display: flex;
-  }
+.form-item-wrapper {
+  display: flex;
+}
+.form-item-wrapper > label {
+  padding-right: 16px;
+}
 .form-item-wrapper > div {
-    flex: 1;
-  }
+  flex: 1;
+}
 .form-isDetails-label {
   background: #f9f9f9;
   border: 1px solid #e8e8e8;
@@ -542,13 +612,14 @@ div.input-select-select {
   z-index: 3;
   position: relative;
 }
-.clearfix:after{
-    display:block;
-    clear:both;
-    content:"";
-    visibility:hidden; 
-    height:0;
-} 
-.clearfix{zoom:1}
-
+.clearfix:after {
+  display: block;
+  clear: both;
+  content: '';
+  visibility: hidden;
+  height: 0;
+}
+.clearfix {
+  zoom: 1;
+}
 </style>
